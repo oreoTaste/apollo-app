@@ -13,6 +13,7 @@ const movieDetail = gql`
           year
           rating
           genres
+          isLiked @client
         },
     }
 `
@@ -20,13 +21,13 @@ const movieDetail = gql`
 export const Detail = () => {
     const { id } = useParams();
     const { loading, error, data } = useQuery(movieDetail, { variables: { id } });
-    const { movie: { title, rating, large_cover_image, summary, year, genres} } = data || {movie : {}};
+    const { movie: { title, rating, large_cover_image, summary, year, genres, isLiked} } = data || {movie : {}};
     return loading ?
         'Loading...' :
         <div key={id}>
             <Img src={large_cover_image} alt={title}/>
             <Container>
-                <Title>{title} ({year})</Title>
+                <Title>{isLiked ? '♥ ' : '♬ '}{title} ({year})</Title>
                 <div>{genres.map(genre => <Span key={genre}>{genre}</Span>)}</div>
                 <div>{rating} / 10</div>
                 <div>{summary}</div>

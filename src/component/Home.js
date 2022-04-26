@@ -1,6 +1,5 @@
 import { gql, useQuery } from '@apollo/client';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import { Poster } from './Poster';
 
 const GET_MOVIES = gql`
     query getMovies {
@@ -9,39 +8,17 @@ const GET_MOVIES = gql`
             title
             rating
             medium_cover_image
+            isLiked @client
         }
     }
 `
+
 export const Home = () => {
     const { loading, error, data } = useQuery(GET_MOVIES);
-    const {movies} = data || {};
-
+    const { movies } = data || {};
     return loading ?
         "Loading..." :
-        movies.map(el =>
-            <Link key={el.id} to={`/${el.id}`}>
-                <Article>
-                    <Img src={el.medium_cover_image} alt={movies.title} />
-                    <Title>{el.title}</Title>
-                </Article>
-            </Link>)
+        movies?.map(el =>
+            <Poster key={el.id} id={el.id} medium_cover_image={el.medium_cover_image} title={el.title} isLiked={el.isLiked}/>
+        )
 }
-
-const Article = styled.article`
-    display: inline-block;
-    margin: 0.6rem;
-    overflow: hidden;
-`;
-const Img = styled.img`
-    width: 230px;
-`;
-const Title = styled.div`
-    width: 230px;
-    text-align: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    -webkit-line-clamp: 1;
-    line-height: 1.2em;
-    height: 1.2em;
-    white-space: nowrap;    
-`;
